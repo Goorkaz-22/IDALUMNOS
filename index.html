@@ -603,6 +603,7 @@ function showSection(id,button) {
     if(button) button.classList.add("active");
 
     if(id==="list") refresh();
+    if(id==="results") loadResultPromotions();
 }
 
 function openClient() {
@@ -817,6 +818,174 @@ async function unknown() {
         alert(error.message);
     }
 }
+
+    
+// ======================================
+// RESULTADOS DE IDENTIFICACIONES
+// ======================================
+
+document.getElementById("resultPromo").addEventListener(
+    "change",
+    function() {
+        loadPromotionResults(this.value);
+    }
+);
+
+async function loadResultPromotions() {
+
+    const select = document.getElementById("resultPromo");
+
+    select.innerHTML =
+        '<option value="">Selecciona una promoción</option>';
+
+    const { data: promos, error } = await supabaseClient
+        .from("promotions")
+        .select("id, name, school")
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error(error);
+        alert("No se pudieron cargar las promociones.");
+        return;
+    }
+
+    promos.forEach(promo => {
+        const option = document.createElement("option");
+        option.value = promo.id;
+        option.textContent = promo.name + " - " + (promo.school || "Sin institución");
+        select.appendChild(option);
+    });
+}
+
+async function loadPromotionResults(promotionId) {
+
+    const container = document.getElementById("resultPhotos");
+
+    container.innerHTML = "";
+
+    document.getElementById("resultIdentified").textContent = "0";
+    document.getElementById("resultUnknown").textContent = "0";
+    document.getElementById("resultPending").textContent = "0";
+
+    if (!promotionId) return;
+
+    container.innerHTML =
+        '<div class="empty">Cargando fotografías...</div>';
+
+    // Obtener fotografías activas
+    const { data: photos, error: photoError } = await supabaseClient
+        .from("student_photos")
+        .select("id, file_path, original_name, sort_order")
+        .eq("promotion_id", promotionId)
+        .is("deleted_at", null)
+        .order("sort_order", { ascending: true });
+
+    if (photoError) {
+        console.error(photoError);
+        container.textContent = "No se pudieron cargar las fotografías.";
+        return;
+    }
+
+    // Obtener identificaciones
+    const { data: answers, error: answerError } = await supabaseClient
+        .from("identifications")
+        .select("photo_id, student_name, status")
+        .eq("promotion_id", promotionId);
+
+    if (answerError) {
+        console.error(answerError);
+        container.textContent = "No se pudieron cargar las identificaciones.";
+        return;
+    }
+
+    const answerMap = {};
+
+    answers.forEach(answer => {
+        answerMap[answer.photo_id] = answer;
+    });
+
+    let identified = 0;
+    let unknownCount = 0;
+    let pending = 0;
+
+    container.innerHTML = "";
+
+    if (!photos.length) {
+        container.innerHTML =
+            '<div class="empty">Esta promoción no tiene fotografías activas.</div>';
+        return;
+    }
+
+    for (const photo of photos) {
+
+        const answer = answerMap[photo.id];
+
+        let status = "pending";
+        let studentName = "";
+
+        if (answer) {
+            status = answer.status;
+            studentName = answer.student_name || "";
+        }
+
+        if (status === "identified") {
+            identified++;
+        } else if (status === "unknown") {
+            unknownCount++;
+        } else {
+            pending++;
+        }
+
+        // Obtener URL temporal de la fotografía
+        const { data: signedData, error: signedError } =
+            await supabaseClient.storage
+                .from("student-photos")
+                .createSignedUrl(photo.file_path, 3600);
+
+        const card = document.createElement("div");
+        card.className = "promo";
+
+        const img = document.createElement("img");
+        img.style.width = "100%";
+        img.style.height = "220px";
+        img.style.objectFit = "contain";
+        img.style.background = "#0f172a";
+        img.style.borderRadius = "8px";
+
+        if (!signedError && signedData) {
+            img.src = signedData.signedUrl;
+        } else {
+            img.alt = "No se pudo cargar la fotografía";
+        }
+
+        const title = document.createElement("h3");
+        title.style.marginTop = "12px";
+        title.textContent = photo.original_name;
+
+        const name = document.createElement("p");
+        name.style.marginTop = "10px";
+
+        if (status === "identified") {
+            name.textContent = "Alumno: " + studentName;
+            name.style.color = "#4ade80";
+        } else if (status === "unknown") {
+            name.textContent = "No identificado";
+            name.style.color = "#fbbf24";
+        } else {
+            name.textContent = "Pendiente de identificación";
+            name.style.color = "#94a3b8";
+        }
+
+        card.append(img, title, name);
+        container.appendChild(card);
+    }
+
+    document.getElementById("resultIdentified").textContent = identified;
+    document.getElementById("resultUnknown").textContent = unknownCount;
+    document.getElementById("resultPending").textContent = pending;
+}
+
 
 </script>
 
