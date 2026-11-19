@@ -515,9 +515,10 @@ async function refresh() {
         actions.className = "promo-actions";
 
         const button = document.createElement("button");
-        button.className = "btn secondary";
-        button.textContent = "Enlace próximamente";
-        button.disabled = true;
+button.className = "btn";
+button.textContent = "Copiar enlace";
+
+button.onclick = () => copyLink(p.share_token);
 
         actions.append(button);
         card.append(title, description, actions);
