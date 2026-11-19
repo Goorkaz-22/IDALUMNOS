@@ -193,12 +193,32 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_raJE3_68sJ33XnJ_DGouXw_vsdf1eBP";
 
+let clientToken = null;
+let clientPhotos = [];
+let clientIndex = 0;
+    
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
+
 async function initAuth() {
+
+    // DETECTAR SI ES UN CLIENTE
+    const params = new URLSearchParams(location.search);
+    const token = params.get("promo");
+
+    if (token) {
+        document.getElementById("loginView").style.display = "none";
+        document.getElementById("adminView").style.display = "none";
+        document.getElementById("clientView").style.display = "block";
+
+        loadPublicClient(token);
+        return;
+    }
+
+    // SI NO ES CLIENTE, COMPROBAR SESIÓN ADMINISTRATIVA
     const { data, error } =
         await supabaseClient.auth.getSession();
 
@@ -216,6 +236,7 @@ async function initAuth() {
         }
     );
 }
+
 
 function updateAuthView(session) {
     const login = document.getElementById("loginView");
@@ -526,16 +547,19 @@ button.onclick = () => copyLink(p.share_token);
     });
 }
 
+function copyLink(token) {
 
-function copyLink(id) {
-    const url=location.origin+location.pathname+"?promo="+encodeURIComponent(id);
+    const url =
+        location.origin +
+        location.pathname +
+        "?promo=" +
+        encodeURIComponent(token);
 
-    navigator.clipboard.writeText(url).then(()=>{
-        alert("Enlace copiado. Atención: por ahora solo funciona en este navegador.");
-    }).catch(()=>{
-        prompt("Copia este enlace de prueba:",url);
-    });
+    navigator.clipboard.writeText(url)
+        .then(() => alert("¡Enlace copiado correctamente!"))
+        .catch(() => prompt("Copia este enlace:", url));
 }
+
 
 function showSection(id,button) {
     document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
@@ -614,6 +638,152 @@ function moveFromUnknown() {
         document.getElementById("clientStatus").textContent="Has terminado la revisión.";
     }
 }
+
+    
+const FUNCTION_URL =
+    SUPABASE_URL + "/functions/v1/public-promotion";
+
+async function loadPublicClient(token) {
+
+    clientToken = token;
+
+    document.getElementById("clientTitle").textContent =
+        "Cargando promoción...";
+
+    try {
+
+        const response = await fetch(
+            FUNCTION_URL + "?token=" + encodeURIComponent(token),
+            {
+                headers: {
+                    apikey: SUPABASE_KEY
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "No se pudo cargar la promoción");
+        }
+
+        clientPromo = result.promotion;
+        clientPhotos = result.photos;
+        clientIndex = 0;
+
+        if (!clientPhotos.length) {
+            throw new Error("Esta promoción todavía no tiene fotografías.");
+        }
+
+        document.getElementById("clientTitle").textContent =
+            clientPromo.name;
+
+        document.getElementById("clientSchool").textContent =
+            clientPromo.school || "";
+
+        showPublicPhoto();
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("clientTitle").textContent =
+            "No se pudo abrir la promoción";
+
+        document.getElementById("clientStatus").textContent =
+            error.message;
+    }
+}
+
+function showPublicPhoto() {
+
+    const photo = clientPhotos[clientIndex];
+
+    document.getElementById("clientPhoto").src = photo.url;
+
+    document.getElementById("clientCounter").textContent =
+        `Fotografía ${clientIndex + 1} de ${clientPhotos.length}`;
+
+    document.getElementById("clientName").value = "";
+
+    document.getElementById("clientStatus").textContent = "";
+}
+
+async function savePublicAnswer(statusOverride = null) {
+
+    const name = document.getElementById("clientName").value.trim();
+
+    const status = statusOverride ||
+        (name ? "identified" : "pending");
+
+    const response = await fetch(FUNCTION_URL, {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json",
+            apikey: SUPABASE_KEY
+        },
+
+        body: JSON.stringify({
+            token: clientToken,
+            photo_id: clientPhotos[clientIndex].id,
+            student_name: name,
+            status: status
+        })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.error || "No se pudo guardar");
+    }
+
+    return true;
+}
+
+async function move(direction) {
+
+    try {
+
+        await savePublicAnswer();
+
+        const next = clientIndex + direction;
+
+        if (next < 0 || next >= clientPhotos.length) {
+            document.getElementById("clientStatus").textContent =
+                "Llegaste al límite de fotografías.";
+            return;
+        }
+
+        clientIndex = next;
+        showPublicPhoto();
+
+    } catch (error) {
+
+        alert(error.message);
+    }
+}
+
+async function unknown() {
+
+    try {
+
+        await savePublicAnswer("unknown");
+
+        if (clientIndex < clientPhotos.length - 1) {
+            clientIndex++;
+            showPublicPhoto();
+        } else {
+            document.getElementById("clientStatus").textContent =
+                "¡Terminaste la revisión!";
+        }
+
+    } catch (error) {
+
+        alert(error.message);
+    }
+}
+
 </script>
 
 </body>
