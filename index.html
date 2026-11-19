@@ -983,8 +983,101 @@ async function loadPromotionResults(promotionId) {
             name.style.color = "#94a3b8";
         }
 
-        card.append(img, title, name);
+       
+        // Campo para corregir el nombre
+        const editName = document.createElement("input");
+        editName.type = "text";
+        editName.placeholder = "Nombre del alumno";
+        editName.value = studentName;
+        editName.style.marginTop = "10px";
+
+        const editButton = document.createElement("button");
+        editButton.className = "btn";
+        editButton.textContent = "Guardar nombre";
+        editButton.style.marginTop = "10px";
+
+        editButton.onclick = async () => {
+            const newName = editName.value.trim();
+
+            if (!newName) {
+                alert("Escribe un nombre.");
+                return;
+            }
+
+            const { error } = await supabaseClient
+                .from("identifications")
+                .upsert({
+                    photo_id: photo.id,
+                    promotion_id: promotionId,
+                    student_name: newName,
+                    status: "identified"
+                }, {
+                    onConflict: "photo_id"
+                });
+
+            if (error) {
+                console.error(error);
+                alert("No se pudo actualizar el nombre.");
+                return;
+            }
+
+            alert("Nombre actualizado correctamente.");
+            await loadPromotionResults(promotionId);
+        };
+
+        // Botón de eliminación lógica
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "btn danger";
+        deleteButton.textContent = "Eliminar fotografía";
+        deleteButton.style.marginTop = "10px";
+
+        deleteButton.onclick = async () => {
+            const confirmDelete = confirm(
+                "¿Enviar esta fotografía a la papelera durante 30 días?"
+            );
+
+            if (!confirmDelete) return;
+
+            const { error } = await supabaseClient
+                .from("student_photos")
+                .update({
+                    deleted_at: new Date().toISOString()
+                })
+                .eq("id", photo.id)
+                .eq("promotion_id", promotionId);
+
+            if (error) {
+                console.error(error);
+                alert("No se pudo eliminar la fotografía.");
+                return;
+            }
+
+            alert("Fotografía enviada a la papelera.");
+            await loadPromotionResults(promotionId);
+        };
+
+        card.append(
+            img,
+            title,
+            name,
+            editName,
+            editButton,
+            deleteButton
+        );
+
         container.appendChild(card);
+```
+
+### ¿Qué conseguiremos?
+
+- Corregir nombres directamente desde Resultados.
+- Enviar fotografías a la papelera sin borrarlas físicamente.
+- Mantener intactas las demás fotografías.
+- Conservar las identificaciones asociadas para poder recuperarlas.
+
+**Importante:** por ahora la papelera todavía no está construida; este botón solamente marca la fecha de eliminación. No elimina archivos del Storage.
+
+Cuando termines de pegarlo, probaremos primero la edición de un nombre y después la eliminación de una fotografía. 🚀
     }
 
     document.getElementById("resultIdentified").textContent = identified;
