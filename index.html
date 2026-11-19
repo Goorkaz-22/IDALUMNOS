@@ -7,363 +7,372 @@
 <title>Identificador de Alumnos</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: #0f172a;
-    color: white;
-    min-height: 100vh;
-    padding: 30px 15px;
-}
-
-.container {
-    max-width: 750px;
-    margin: auto;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-header h1 {
-    font-size: 27px;
-    margin-bottom: 10px;
-}
-
-header p {
-    color: #94a3b8;
-}
-
-.panel {
-    background: #1e293b;
-    padding: 25px;
-    border-radius: 16px;
-    border: 1px solid #334155;
-}
-
-.upload {
-    text-align: center;
-    padding: 25px;
-    border: 2px dashed #475569;
-    border-radius: 12px;
-    margin-bottom: 25px;
-}
-
-button, .upload label {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover, .upload label:hover {
-    background: #1d4ed8;
-}
-
-input[type=file] {
-    display: none;
-}
-
-.viewer {
-    display: none;
-}
-
-.progress {
-    display: flex;
-    justify-content: space-between;
-    color: #94a3b8;
-    font-size: 14px;
-    margin-bottom: 12px;
-}
-
-.progress-bar {
-    height: 7px;
-    background: #334155;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: #3b82f6;
-    width: 0%;
-}
-
-.photo {
-    background: #0f172a;
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.photo img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.photo-name {
-    text-align: center;
-    color: #94a3b8;
-    font-size: 13px;
-    margin-bottom: 20px;
-}
-
-label.field-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-.name-input {
-    width: 100%;
-    padding: 14px;
-    background: #0f172a;
-    border: 1px solid #475569;
-    border-radius: 8px;
-    color: white;
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.navigation {
-    display: flex;
-    gap: 10px;
-    justify-content: space-between;
-}
-
-.navigation button {
-    flex: 1;
-}
-
-.secondary {
-    background: #475569;
-}
-
-.unknown {
-    background: #b45309;
-}
-
-.status {
-    text-align: center;
-    color: #94a3b8;
-    margin-top: 20px;
-    font-size: 13px;
-}
-
-@media(max-width: 500px) {
-    .photo {
-        height: 300px;
-    }
-
-    .navigation button {
-        padding: 12px 8px;
-        font-size: 12px;
-    }
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#0f172a;color:white;min-height:100vh}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:240px;background:#111827;padding:25px 18px}
+.logo{font-size:20px;font-weight:bold;margin-bottom:40px}
+.menu button{display:block;width:100%;text-align:left;background:none;color:#94a3b8;padding:14px;border:0;border-radius:8px;cursor:pointer;margin-bottom:8px}
+.menu button:hover,.menu button.active{background:#1e293b;color:white}
+main{flex:1;padding:35px;max-width:1200px}
+h1{font-size:27px;margin-bottom:10px}
+.subtitle{color:#94a3b8;margin-bottom:30px}
+.section{display:none}
+.section.active{display:block}
+.card{background:#1e293b;border:1px solid #334155;border-radius:13px;padding:24px;margin-bottom:20px}
+label{display:block;margin:15px 0 8px;color:#cbd5e1;font-size:14px}
+input{width:100%;padding:13px;background:#0f172a;color:white;border:1px solid #475569;border-radius:8px}
+input[type=file]{padding:10px}
+.btn{background:#2563eb;color:white;border:0;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:bold}
+.btn:hover{background:#1d4ed8}
+.btn.secondary{background:#475569}
+.btn.danger{background:#991b1b}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:25px}
+.stat{background:#1e293b;padding:22px;border-radius:12px;border:1px solid #334155}
+.stat strong{font-size:28px;display:block;margin-bottom:8px}
+.stat span{color:#94a3b8;font-size:13px}
+.promotions{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:15px}
+.promo{background:#1e293b;padding:20px;border:1px solid #334155;border-radius:12px}
+.promo h3{margin-bottom:10px}
+.promo p{color:#94a3b8;font-size:13px;margin-bottom:15px}
+.promo-actions{display:flex;gap:8px;flex-wrap:wrap}
+.promo-actions button{font-size:12px;padding:9px}
+.empty{color:#94a3b8;text-align:center;padding:30px}
+#clientView{display:none;max-width:650px;margin:40px auto;padding:20px}
+#clientPhoto{width:100%;height:400px;object-fit:contain;background:#0f172a;border-radius:12px;margin:20px 0}
+.nav{display:flex;gap:8px;margin-top:15px}
+.nav button{flex:1}
+.progress{color:#94a3b8;font-size:13px}
+@media(max-width:700px){
+.layout{display:block}
+.sidebar{width:100%;padding:15px}
+.logo{margin-bottom:15px}
+.menu{display:flex;gap:5px}
+.menu button{margin:0;font-size:12px;text-align:center}
+main{padding:20px}
+.stats{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="layout" id="adminView">
 
-<header>
-    <h1>📸 Identificador de Alumnos</h1>
-    <p>Sistema de identificación por promociones</p>
-</header>
+<aside class="sidebar">
+<div class="logo">📸 Identificador</div>
+<div class="menu">
+<button class="active" onclick="showSection('dashboard',this)">⌂ Inicio</button>
+<button onclick="showSection('create',this)">＋ Crear promoción</button>
+<button onclick="showSection('list',this)">▤ Promociones</button>
+</div>
+</aside>
 
-<div class="panel">
+<main>
 
-    <div class="upload">
-        <p style="margin-bottom:20px;color:#94a3b8">
-            Selecciona la carpeta de fotografías
-        </p>
+<section id="dashboard" class="section active">
+<h1>Panel de administración</h1>
+<p class="subtitle">Gestiona las promociones y sus fotografías.</p>
 
-        <label for="folderInput">📁 Cargar carpeta</label>
+<div class="stats">
+<div class="stat"><strong id="totalPromos">0</strong><span>Promociones</span></div>
+<div class="stat"><strong id="totalPhotos">0</strong><span>Fotografías</span></div>
+<div class="stat"><strong id="totalIdentified">0</strong><span>Identificaciones</span></div>
+</div>
 
-        <input
-            type="file"
-            id="folderInput"
-            webkitdirectory
-            multiple
-            accept="image/*"
-        >
-    </div>
+<div class="card">
+<h3>Bienvenido al sistema</h3>
+<p style="color:#94a3b8;margin-top:12px">Crea una promoción para comenzar a organizar las fotografías de tus alumnos.</p>
+<br>
+<button class="btn" onclick="showSection('create')">Crear promoción</button>
+</div>
+</section>
 
-    <div class="viewer" id="viewer">
+<section id="create" class="section">
+<h1>Nueva promoción</h1>
+<p class="subtitle">Registra una promoción y carga su carpeta de fotografías.</p>
 
-        <div class="progress">
-            <span>Progreso</span>
-            <span id="counter">0 / 0</span>
-        </div>
+<div class="card">
+<label>Nombre de la promoción</label>
+<input id="promoName" placeholder="Ej. Promoción 2026">
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+<label>Institución educativa</label>
+<input id="schoolName" placeholder="Nombre del colegio">
 
-        <div class="photo">
-            <img id="studentPhoto" alt="Fotografía del alumno">
-        </div>
+<label>Carpeta de fotografías</label>
+<input id="photoFolder" type="file" webkitdirectory multiple accept="image/*">
 
-        <div class="photo-name" id="photoName"></div>
+<p id="fileCount" style="color:#94a3b8;margin-top:12px;font-size:13px">Ninguna fotografía seleccionada.</p>
 
-        <label class="field-label" for="studentName">
-            Nombre del alumno
-        </label>
+<br>
+<button class="btn" id="savePromo">Guardar promoción</button>
+</div>
+</section>
 
-        <input
-            type="text"
-            id="studentName"
-            class="name-input"
-            placeholder="Escribe el nombre del alumno..."
-            autocomplete="off"
-        >
+<section id="list" class="section">
+<h1>Mis promociones</h1>
+<p class="subtitle">Administra las carpetas de alumnos.</p>
+<div class="promotions" id="promotionList"></div>
+</section>
 
-        <div class="navigation">
-            <button class="secondary" onclick="previousPhoto()">
-                ← Anterior
-            </button>
+</main>
+</div>
 
-            <button class="unknown" onclick="markUnknown()">
-                No lo identifico
-            </button>
-
-            <button onclick="nextPhoto()">
-                Siguiente →
-            </button>
-        </div>
-
-        <div class="status" id="status"></div>
-
-    </div>
-
+<div id="clientView">
+<div class="card">
+<h2 id="clientTitle">Promoción</h2>
+<p id="clientSchool" style="color:#94a3b8;margin-top:8px"></p>
+<hr style="border-color:#334155;margin:20px 0">
+<p class="progress" id="clientCounter"></p>
+<img id="clientPhoto" alt="Fotografía del alumno">
+<label>Nombre del alumno</label>
+<input id="clientName" placeholder="Escribe el nombre">
+<div class="nav">
+<button class="btn secondary" onclick="move(-1)">Anterior</button>
+<button class="btn" onclick="move(1)">Siguiente</button>
+</div>
+<button class="btn danger" style="width:100%;margin-top:12px" onclick="unknown()">No lo identifico</button>
+<p id="clientStatus" style="color:#94a3b8;margin-top:15px"></p>
 </div>
 </div>
 
 <script>
-let photos = [];
-let currentIndex = 0;
-let answers = {};
+const DB_NAME = "IdentificadorAlumnosDB";
+let db;
+let selectedPhotos = [];
+let clientPromo = null;
+let clientIndex = 0;
+let clientAnswers = {};
 
-const folderInput = document.getElementById("folderInput");
-const viewer = document.getElementById("viewer");
+const request = indexedDB.open(DB_NAME, 1);
 
-folderInput.addEventListener("change", function() {
+request.onupgradeneeded = e => {
+    const database = e.target.result;
+    database.createObjectStore("promotions", {keyPath:"id"});
+};
 
-    photos = Array.from(this.files)
-        .filter(file => file.type.startsWith("image/"))
-        .sort((a, b) => a.name.localeCompare(b.name, undefined, {
-            numeric: true
-        }));
+request.onsuccess = e => {
+    db = e.target.result;
+    startApp();
+};
 
-    if (photos.length === 0) {
-        alert("No se encontraron fotografías.");
+request.onerror = () => alert("No se pudo abrir la base de datos.");
+
+function store(mode="readonly") {
+    return db.transaction("promotions",mode).objectStore("promotions");
+}
+
+function getPromotions() {
+    return new Promise(resolve => {
+        const req = store().getAll();
+        req.onsuccess = () => resolve(req.result || []);
+    });
+}
+
+async function startApp() {
+    const params = new URLSearchParams(location.search);
+    const id = params.get("promo");
+
+    if(id) {
+        const req = store().get(id);
+        req.onsuccess = () => {
+            if(req.result) {
+                clientPromo = req.result;
+                openClient();
+            } else {
+                alert("Promoción no encontrada en este navegador.");
+            }
+        };
+    } else {
+        await refresh();
+    }
+}
+
+document.getElementById("photoFolder").addEventListener("change", e => {
+    selectedPhotos = Array.from(e.target.files)
+        .filter(f => f.type.startsWith("image/"))
+        .sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+
+    document.getElementById("fileCount").textContent =
+        selectedPhotos.length + " fotografías seleccionadas.";
+});
+
+document.getElementById("savePromo").addEventListener("click", async () => {
+    const name = document.getElementById("promoName").value.trim();
+    const school = document.getElementById("schoolName").value.trim();
+
+    if(!name || !selectedPhotos.length) {
+        alert("Ingresa el nombre y selecciona fotografías.");
         return;
     }
 
-    currentIndex = 0;
-    answers = {};
+    const id = crypto.randomUUID();
 
-    viewer.style.display = "block";
-
-    showPhoto();
-});
-
-function showPhoto() {
-
-    const photo = photos[currentIndex];
-
-    document.getElementById("studentPhoto").src =
-        URL.createObjectURL(photo);
-
-    document.getElementById("photoName").textContent =
-        photo.name;
-
-    document.getElementById("studentName").value =
-        answers[currentIndex]?.name || "";
-
-    document.getElementById("counter").textContent =
-        `${currentIndex + 1} / ${photos.length}`;
-
-    document.getElementById("progressFill").style.width =
-        `${((currentIndex + 1) / photos.length) * 100}%`;
-
-    document.getElementById("status").textContent =
-        answers[currentIndex]?.unknown
-        ? "Marcado como no identificado"
-        : "";
-}
-
-function saveAnswer() {
-
-    const name = document.getElementById("studentName").value.trim();
-
-    if (name) {
-        answers[currentIndex] = {
-            name: name,
-            unknown: false
-        };
-    } else if (!answers[currentIndex]?.unknown) {
-        delete answers[currentIndex];
-    }
-}
-
-function nextPhoto() {
-
-    saveAnswer();
-
-    if (currentIndex < photos.length - 1) {
-        currentIndex++;
-        showPhoto();
-    } else {
-        document.getElementById("status").textContent =
-            "¡Llegaste a la última fotografía!";
-    }
-}
-
-function previousPhoto() {
-
-    saveAnswer();
-
-    if (currentIndex > 0) {
-        currentIndex--;
-        showPhoto();
-    }
-}
-
-function markUnknown() {
-
-    answers[currentIndex] = {
-        name: "",
-        unknown: true
+    const promo = {
+        id,
+        name,
+        school,
+        photos: selectedPhotos.map(file => ({
+            name:file.name,
+            blob:file
+        })),
+        answers:{},
+        createdAt:new Date().toISOString()
     };
 
-    nextPhotoWithoutSaving();
+    await new Promise((resolve,reject)=>{
+        const req=store("readwrite").put(promo);
+        req.onsuccess=resolve;
+        req.onerror=reject;
+    });
+
+    alert("Promoción creada correctamente.");
+
+    document.getElementById("promoName").value="";
+    document.getElementById("schoolName").value="";
+    document.getElementById("photoFolder").value="";
+    document.getElementById("fileCount").textContent="Ninguna fotografía seleccionada.";
+    selectedPhotos=[];
+
+    await refresh();
+    showSection("list");
+});
+
+async function refresh() {
+    const promos = await getPromotions();
+
+    document.getElementById("totalPromos").textContent=promos.length;
+
+    document.getElementById("totalPhotos").textContent=
+        promos.reduce((sum,p)=>sum+p.photos.length,0);
+
+    document.getElementById("totalIdentified").textContent=
+        promos.reduce((sum,p)=>sum+
+        Object.values(p.answers||{}).filter(a=>a.name).length,0);
+
+    const list=document.getElementById("promotionList");
+
+    if(!promos.length) {
+        list.innerHTML='<div class="empty">Todavía no hay promociones.</div>';
+        return;
+    }
+
+    list.innerHTML="";
+
+    promos.forEach(p=>{
+        const card=document.createElement("div");
+        card.className="promo";
+
+        const title=document.createElement("h3");
+        title.textContent=p.name;
+
+        const description=document.createElement("p");
+        description.textContent=(p.school||"Sin institución")+" · "+p.photos.length+" fotografías";
+
+        const actions=document.createElement("div");
+        actions.className="promo-actions";
+
+        const link=document.createElement("button");
+        link.className="btn";
+        link.textContent="Copiar enlace";
+        link.onclick=()=>copyLink(p.id);
+
+        const review=document.createElement("button");
+        review.className="btn secondary";
+        review.textContent="Revisar";
+        review.onclick=()=>alert("Próximamente: revisión completa de identificaciones.");
+
+        actions.append(link,review);
+        card.append(title,description,actions);
+        list.append(card);
+    });
 }
 
-function nextPhotoWithoutSaving() {
+function copyLink(id) {
+    const url=location.origin+location.pathname+"?promo="+encodeURIComponent(id);
 
-    if (currentIndex < photos.length - 1) {
-        currentIndex++;
-        showPhoto();
+    navigator.clipboard.writeText(url).then(()=>{
+        alert("Enlace copiado. Atención: por ahora solo funciona en este navegador.");
+    }).catch(()=>{
+        prompt("Copia este enlace de prueba:",url);
+    });
+}
+
+function showSection(id,button) {
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
+    if(button) button.classList.add("active");
+
+    if(id==="list") refresh();
+}
+
+function openClient() {
+    document.getElementById("adminView").style.display="none";
+    document.getElementById("clientView").style.display="block";
+
+    document.getElementById("clientTitle").textContent=clientPromo.name;
+    document.getElementById("clientSchool").textContent=clientPromo.school;
+
+    clientAnswers=clientPromo.answers||{};
+    showClientPhoto();
+}
+
+function showClientPhoto() {
+    const photo=clientPromo.photos[clientIndex];
+
+    document.getElementById("clientPhoto").src=URL.createObjectURL(photo.blob);
+    document.getElementById("clientCounter").textContent=
+        "Fotografía "+(clientIndex+1)+" de "+clientPromo.photos.length;
+
+    document.getElementById("clientName").value=
+        clientAnswers[clientIndex]?.name||"";
+
+    document.getElementById("clientStatus").textContent=
+        clientAnswers[clientIndex]?.unknown?"Pendiente de identificación":"";
+}
+
+function saveClientAnswer() {
+    const name=document.getElementById("clientName").value.trim();
+
+    if(name) clientAnswers[clientIndex]={name,unknown:false};
+    else if(!clientAnswers[clientIndex]?.unknown) delete clientAnswers[clientIndex];
+}
+
+function persistAnswers() {
+    clientPromo.answers=clientAnswers;
+    store("readwrite").put(clientPromo);
+}
+
+function move(direction) {
+    saveClientAnswer();
+
+    const next=clientIndex+direction;
+
+    if(next<0 || next>=clientPromo.photos.length) {
+        persistAnswers();
+        document.getElementById("clientStatus").textContent="Has llegado al límite de fotografías.";
+        return;
+    }
+
+    persistAnswers();
+    clientIndex=next;
+    showClientPhoto();
+}
+
+function unknown() {
+    clientAnswers[clientIndex]={name:"",unknown:true};
+    persistAnswers();
+    moveFromUnknown();
+}
+
+function moveFromUnknown() {
+    if(clientIndex<clientPromo.photos.length-1) {
+        clientIndex++;
+        showClientPhoto();
     } else {
-        document.getElementById("status").textContent =
-            "¡Llegaste a la última fotografía!";
+        document.getElementById("clientStatus").textContent="Has terminado la revisión.";
     }
 }
 </script>
