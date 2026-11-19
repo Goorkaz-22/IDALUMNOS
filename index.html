@@ -325,96 +325,169 @@ document.getElementById("photoFolder").addEventListener("change", e => {
         selectedPhotos.length + " fotografías seleccionadas.";
 });
 
+
 document.getElementById("savePromo").addEventListener("click", async () => {
+
     const name = document.getElementById("promoName").value.trim();
     const school = document.getElementById("schoolName").value.trim();
+    const button = document.getElementById("savePromo");
 
-    if(!name || !selectedPhotos.length) {
+    if (!name || selectedPhotos.length === 0) {
         alert("Ingresa el nombre y selecciona fotografías.");
         return;
     }
 
-    const id = crypto.randomUUID();
+    button.disabled = true;
+    button.textContent = "Creando promoción...";
 
-    const promo = {
-        id,
-        name,
-        school,
-        photos: selectedPhotos.map(file => ({
-            name:file.name,
-            blob:file
-        })),
-        answers:{},
-        createdAt:new Date().toISOString()
-    };
+    try {
+        const { data: authData, error: authError } =
+            await supabaseClient.auth.getUser();
 
-    await new Promise((resolve,reject)=>{
-        const req=store("readwrite").put(promo);
-        req.onsuccess=resolve;
-        req.onerror=reject;
-    });
+        if (authError || !authData.user) {
+            throw new Error("Debes iniciar sesión nuevamente.");
+        }
 
-    alert("Promoción creada correctamente.");
+        // 1. Crear promoción en Supabase
+        const { data: promo, error: promoError } =
+            await supabaseClient
+                .from("promotions")
+                .insert({
+                    name,
+                    school,
+                    owner_id: authData.user.id
+                })
+                .select()
+                .single();
 
-    document.getElementById("promoName").value="";
-    document.getElementById("schoolName").value="";
-    document.getElementById("photoFolder").value="";
-    document.getElementById("fileCount").textContent="Ninguna fotografía seleccionada.";
-    selectedPhotos=[];
+        if (promoError) throw promoError;
 
-    await refresh();
-    showSection("list");
+        // 2. Subir fotografías a Storage
+        let uploaded = 0;
+
+        for (let i = 0; i < selectedPhotos.length; i++) {
+
+            const file = selectedPhotos[i];
+
+            const extension = file.name.split(".").pop();
+            const path = `${promo.id}/${crypto.randomUUID()}.${extension}`;
+
+            const { error: uploadError } =
+                await supabaseClient.storage
+                    .from("student-photos")
+                    .upload(path, file);
+
+            if (uploadError) throw uploadError;
+
+            // 3. Registrar fotografía en la base de datos
+            const { error: photoError } =
+                await supabaseClient
+                    .from("student_photos")
+                    .insert({
+                        promotion_id: promo.id,
+                        file_path: path,
+                        original_name: file.name,
+                        sort_order: i
+                    });
+
+            if (photoError) throw photoError;
+
+            uploaded++;
+
+            button.textContent =
+                `Subiendo fotografías ${uploaded}/${selectedPhotos.length}`;
+        }
+
+        alert("¡Promoción y fotografías guardadas en Supabase!");
+
+        document.getElementById("promoName").value = "";
+        document.getElementById("schoolName").value = "";
+        document.getElementById("photoFolder").value = "";
+        document.getElementById("fileCount").textContent =
+            "Ninguna fotografía seleccionada.";
+
+        selectedPhotos = [];
+
+        await refresh();
+        showSection("list");
+
+    } catch (error) {
+        console.error(error);
+        alert("Error al guardar: " + error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = "Guardar promoción";
+    }
 });
 
+
 async function refresh() {
-    const promos = await getPromotions();
 
-    document.getElementById("totalPromos").textContent=promos.length;
+    const { data: promos, error } = await supabaseClient
+        .from("promotions")
+        .select(`
+            id,
+            name,
+            school,
+            share_token,
+            student_photos(id)
+        `)
+        .order("created_at", { ascending: false });
 
-    document.getElementById("totalPhotos").textContent=
-        promos.reduce((sum,p)=>sum+p.photos.length,0);
-
-    document.getElementById("totalIdentified").textContent=
-        promos.reduce((sum,p)=>sum+
-        Object.values(p.answers||{}).filter(a=>a.name).length,0);
-
-    const list=document.getElementById("promotionList");
-
-    if(!promos.length) {
-        list.innerHTML='<div class="empty">Todavía no hay promociones.</div>';
+    if (error) {
+        console.error(error);
+        alert("No se pudieron cargar las promociones.");
         return;
     }
 
-    list.innerHTML="";
+    const totalPhotos = promos.reduce(
+        (sum, p) => sum + p.student_photos.length, 0
+    );
 
-    promos.forEach(p=>{
-        const card=document.createElement("div");
-        card.className="promo";
+    document.getElementById("totalPromos").textContent =
+        promos.length;
 
-        const title=document.createElement("h3");
-        title.textContent=p.name;
+    document.getElementById("totalPhotos").textContent =
+        totalPhotos;
 
-        const description=document.createElement("p");
-        description.textContent=(p.school||"Sin institución")+" · "+p.photos.length+" fotografías";
+    // Las identificaciones se conectarán en el siguiente paso
+    document.getElementById("totalIdentified").textContent = "0";
 
-        const actions=document.createElement("div");
-        actions.className="promo-actions";
+    const list = document.getElementById("promotionList");
+    list.innerHTML = "";
 
-        const link=document.createElement("button");
-        link.className="btn";
-        link.textContent="Copiar enlace";
-        link.onclick=()=>copyLink(p.id);
+    if (!promos.length) {
+        list.innerHTML =
+            '<div class="empty">Todavía no hay promociones.</div>';
+        return;
+    }
 
-        const review=document.createElement("button");
-        review.className="btn secondary";
-        review.textContent="Revisar";
-        review.onclick=()=>alert("Próximamente: revisión completa de identificaciones.");
+    promos.forEach(p => {
 
-        actions.append(link,review);
-        card.append(title,description,actions);
+        const card = document.createElement("div");
+        card.className = "promo";
+
+        const title = document.createElement("h3");
+        title.textContent = p.name;
+
+        const description = document.createElement("p");
+        description.textContent =
+            `${p.school || "Sin institución"} · ${p.student_photos.length} fotografías`;
+
+        const actions = document.createElement("div");
+        actions.className = "promo-actions";
+
+        const button = document.createElement("button");
+        button.className = "btn secondary";
+        button.textContent = "Enlace próximamente";
+        button.disabled = true;
+
+        actions.append(button);
+        card.append(title, description, actions);
         list.append(card);
     });
 }
+
 
 function copyLink(id) {
     const url=location.origin+location.pathname+"?promo="+encodeURIComponent(id);
