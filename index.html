@@ -57,6 +57,50 @@ main{padding:20px}
 
 <body>
 
+
+<div id="loginView" style="
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+">
+    <div style="
+        background:#1e293b;
+        border:1px solid #334155;
+        padding:35px;
+        border-radius:16px;
+        width:100%;
+        max-width:400px;
+    ">
+        <h2 style="margin-bottom:10px">🔐 Acceso administrativo</h2>
+
+        <p style="color:#94a3b8;margin-bottom:25px">
+            Identificador de Alumnos
+        </p>
+
+        <form id="loginForm">
+            <label>Correo electrónico</label>
+            <input id="email" type="email"
+                placeholder="admin@correo.com" required>
+
+            <label>Contraseña</label>
+            <input id="password" type="password"
+                placeholder="Tu contraseña" required>
+
+            <button class="btn" type="submit"
+                style="width:100%;margin-top:20px">
+                Iniciar sesión
+            </button>
+        </form>
+
+        <p id="loginMessage"
+           style="margin-top:15px;color:#f87171;font-size:13px">
+        </p>
+    </div>
+</div>
+
+    
 <div class="layout" id="adminView">
 
 <aside class="sidebar">
@@ -66,6 +110,10 @@ main{padding:20px}
 <button onclick="showSection('create',this)">＋ Crear promoción</button>
 <button onclick="showSection('list',this)">▤ Promociones</button>
 </div>
+    <button class="btn danger" onclick="logout()"
+    style="width:100%;margin-top:25px">
+    Cerrar sesión
+</button>
 </aside>
 
 <main>
@@ -136,7 +184,87 @@ main{padding:20px}
 </div>
 </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+
+const SUPABASE_URL =
+    "https://ihzqwruzhzaoseqdyary.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_raJE3_68sJ33XnJ_DGouXw_vsdf1eBP";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+async function initAuth() {
+    const { data, error } =
+        await supabaseClient.auth.getSession();
+
+    if (error) {
+        document.getElementById("loginMessage").textContent =
+            "No se pudo comprobar la sesión.";
+        return;
+    }
+
+    updateAuthView(data.session);
+
+    supabaseClient.auth.onAuthStateChange(
+        (_event, session) => {
+            updateAuthView(session);
+        }
+    );
+}
+
+function updateAuthView(session) {
+    const login = document.getElementById("loginView");
+    const admin = document.getElementById("adminView");
+
+    if (session) {
+        login.style.display = "none";
+        admin.style.display = "flex";
+        refresh();
+    } else {
+        login.style.display = "flex";
+        admin.style.display = "none";
+    }
+}
+
+document.getElementById("loginForm").addEventListener(
+    "submit", async function(e) {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const message = document.getElementById("loginMessage");
+
+        message.textContent = "Verificando acceso...";
+
+        const { error } =
+            await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+            });
+
+        if (error) {
+            message.textContent = "Correo o contraseña incorrectos.";
+            return;
+        }
+
+        message.textContent = "";
+    }
+);
+
+async function logout() {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        alert("No se pudo cerrar la sesión.");
+    }
+}
+
+    
 const DB_NAME = "IdentificadorAlumnosDB";
 let db;
 let selectedPhotos = [];
@@ -153,7 +281,7 @@ request.onupgradeneeded = e => {
 
 request.onsuccess = e => {
     db = e.target.result;
-    startApp();
+    initAuth();
 };
 
 request.onerror = () => alert("No se pudo abrir la base de datos.");
