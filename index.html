@@ -341,6 +341,8 @@ document.getElementById("savePromo").addEventListener("click", async () => {
     button.textContent = "Creando promoción...";
 
     try {
+        let etapa = "crear promoción";
+        
         const { data: authData, error: authError } =
             await supabaseClient.auth.getUser();
 
@@ -361,7 +363,8 @@ document.getElementById("savePromo").addEventListener("click", async () => {
                 .single();
 
         if (promoError) throw promoError;
-
+etapa = "subir fotografía";
+        
         // 2. Subir fotografías a Storage
         let uploaded = 0;
 
@@ -380,6 +383,7 @@ document.getElementById("savePromo").addEventListener("click", async () => {
             if (uploadError) throw uploadError;
 
             // 3. Registrar fotografía en la base de datos
+            etapa = "registrar fotografía";
             const { error: photoError } =
                 await supabaseClient
                     .from("student_photos")
@@ -412,9 +416,9 @@ document.getElementById("savePromo").addEventListener("click", async () => {
         showSection("list");
 
     } catch (error) {
-        console.error(error);
-        alert("Error al guardar: " + error.message);
-    } finally {
+    console.error("Error:", error);
+    alert("Error en etapa: " + etapa + "\n" + error.message);
+} finally {
         button.disabled = false;
         button.textContent = "Guardar promoción";
     }
