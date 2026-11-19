@@ -1,614 +1,372 @@
+
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identificador de Alumnos</title>
 
-    <meta charset="UTF-8">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+body {
+    background: #0f172a;
+    color: white;
+    min-height: 100vh;
+    padding: 30px 15px;
+}
 
-    <title>
-        Concurso K-Pop Dance 2026
-    </title>
+.container {
+    max-width: 750px;
+    margin: auto;
+}
 
-    <meta
-        name="description"
-        content="Concurso K-Pop Dance 2026"
-    >
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
+header h1 {
+    font-size: 27px;
+    margin-bottom: 10px;
+}
 
+header p {
+    color: #94a3b8;
+}
+
+.panel {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid #334155;
+}
+
+.upload {
+    text-align: center;
+    padding: 25px;
+    border: 2px dashed #475569;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+button, .upload label {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover, .upload label:hover {
+    background: #1d4ed8;
+}
+
+input[type=file] {
+    display: none;
+}
+
+.viewer {
+    display: none;
+}
+
+.progress {
+    display: flex;
+    justify-content: space-between;
+    color: #94a3b8;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    height: 7px;
+    background: #334155;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #3b82f6;
+    width: 0%;
+}
+
+.photo {
+    background: #0f172a;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.photo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.photo-name {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+label.field-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.name-input {
+    width: 100%;
+    padding: 14px;
+    background: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.navigation {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.navigation button {
+    flex: 1;
+}
+
+.secondary {
+    background: #475569;
+}
+
+.unknown {
+    background: #b45309;
+}
+
+.status {
+    text-align: center;
+    color: #94a3b8;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+@media(max-width: 500px) {
+    .photo {
+        height: 300px;
+    }
+
+    .navigation button {
+        padding: 12px 8px;
+        font-size: 12px;
+    }
+}
+</style>
 </head>
-
 
 <body>
 
+<div class="container">
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
-<header class="header">
-
-    <div class="header-container">
-
-        <a
-            href="#inicio"
-            class="logo"
-        >
-
-            <img
-                src="assets/logo.png"
-                alt="K-Pop Dance 2026"
-            >
-
-        </a>
-
-
-        <nav>
-
-            <a href="#ranking">
-                Ranking
-            </a>
-
-            <a href="#participantes">
-                Participantes
-            </a>
-
-            <a href="#fechas">
-                Fechas
-            </a>
-
-            <a
-                href="#registro"
-                class="nav-button"
-            >
-                Participar
-            </a>
-
-        </nav>
-
-    </div>
-
+<header>
+    <h1>📸 Identificador de Alumnos</h1>
+    <p>Sistema de identificación por promociones</p>
 </header>
 
+<div class="panel">
 
-<!-- =====================================================
-     HERO
-===================================================== -->
-
-<main id="inicio">
-
-<section class="hero">
-
-    <div class="hero-content">
-
-        <span class="hero-label">
-            🎤 CONCURSO 2026
-        </span>
-
-
-        <h1>
-
-            K-POP
-
-            <span>
-                DANCE
-            </span>
-
-        </h1>
-
-
-        <p>
-
-            Demuestra tu talento,
-            comparte tu coreografía
-            y consigue la mayor cantidad
-            de likes en TikTok.
-
+    <div class="upload">
+        <p style="margin-bottom:20px;color:#94a3b8">
+            Selecciona la carpeta de fotografías
         </p>
 
+        <label for="folderInput">📁 Cargar carpeta</label>
 
-        <div class="hero-buttons">
-
-            <a
-                href="#ranking"
-                class="button button-primary"
-            >
-                🏆 VER RANKING
-            </a>
-
-
-            <a
-                href="#registro"
-                class="button button-secondary"
-            >
-                PARTICIPAR
-            </a>
-
-        </div>
-
+        <input
+            type="file"
+            id="folderInput"
+            webkitdirectory
+            multiple
+            accept="image/*"
+        >
     </div>
 
-</section>
+    <div class="viewer" id="viewer">
 
-
-<!-- =====================================================
-     COUNTDOWN
-===================================================== -->
-
-<section class="countdown-section">
-
-    <div class="section-container">
-
-        <p class="section-label">
-            ⏳ EL CONCURSO TERMINA EN
-        </p>
-
-
-        <div class="countdown">
-
-            <div class="count-box">
-
-                <strong id="days">
-                    00
-                </strong>
-
-                <span>
-                    DÍAS
-                </span>
-
-            </div>
-
-
-            <div class="count-box">
-
-                <strong id="hours">
-                    00
-                </strong>
-
-                <span>
-                    HORAS
-                </span>
-
-            </div>
-
-
-            <div class="count-box">
-
-                <strong id="minutes">
-                    00
-                </strong>
-
-                <span>
-                    MINUTOS
-                </span>
-
-            </div>
-
-
-            <div class="count-box">
-
-                <strong id="seconds">
-                    00
-                </strong>
-
-                <span>
-                    SEGUNDOS
-                </span>
-
-            </div>
-
+        <div class="progress">
+            <span>Progreso</span>
+            <span id="counter">0 / 0</span>
         </div>
 
-
-        <p class="countdown-date">
-
-            25 de octubre de 2026 · 11:59 p. m.
-
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     RANKING
-===================================================== -->
-
-<section
-    id="ranking"
-    class="section"
->
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <span>
-                🏆 RANKING
-            </span>
-
-            <h2>
-                Los favoritos
-            </h2>
-
-            <p>
-                El ranking se actualiza según
-                los likes registrados.
-            </p>
-
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
         </div>
 
+        <div class="photo">
+            <img id="studentPhoto" alt="Fotografía del alumno">
+        </div>
 
-        <!-- TOP 3 -->
+        <div class="photo-name" id="photoName"></div>
 
-        <div
-            id="top-three"
-            class="top-three"
+        <label class="field-label" for="studentName">
+            Nombre del alumno
+        </label>
+
+        <input
+            type="text"
+            id="studentName"
+            class="name-input"
+            placeholder="Escribe el nombre del alumno..."
+            autocomplete="off"
         >
 
-            <div class="loading">
+        <div class="navigation">
+            <button class="secondary" onclick="previousPhoto()">
+                ← Anterior
+            </button>
 
-                Cargando participantes...
+            <button class="unknown" onclick="markUnknown()">
+                No lo identifico
+            </button>
 
-            </div>
-
+            <button onclick="nextPhoto()">
+                Siguiente →
+            </button>
         </div>
+
+        <div class="status" id="status"></div>
 
     </div>
 
-</section>
+</div>
+</div>
 
+<script>
+let photos = [];
+let currentIndex = 0;
+let answers = {};
 
-<!-- =====================================================
-     PARTICIPANTES
-===================================================== -->
+const folderInput = document.getElementById("folderInput");
+const viewer = document.getElementById("viewer");
 
-<section
-    id="participantes"
-    class="section participants-section"
->
+folderInput.addEventListener("change", function() {
 
-    <div class="section-container">
+    photos = Array.from(this.files)
+        .filter(file => file.type.startsWith("image/"))
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, {
+            numeric: true
+        }));
 
-        <div class="section-heading">
+    if (photos.length === 0) {
+        alert("No se encontraron fotografías.");
+        return;
+    }
 
-            <span>
-                🎬 PARTICIPANTES
-            </span>
+    currentIndex = 0;
+    answers = {};
 
-            <h2>
-                Todos los participantes
-            </h2>
+    viewer.style.display = "block";
 
-            <p>
-                Apoya a tu participante favorito
-                directamente en TikTok.
-            </p>
+    showPhoto();
+});
 
-        </div>
+function showPhoto() {
 
+    const photo = photos[currentIndex];
 
-        <div
-            id="participants-grid"
-            class="participants-grid"
-        >
+    document.getElementById("studentPhoto").src =
+        URL.createObjectURL(photo);
 
-            <div class="loading">
+    document.getElementById("photoName").textContent =
+        photo.name;
 
-                Cargando participantes...
+    document.getElementById("studentName").value =
+        answers[currentIndex]?.name || "";
 
-            </div>
+    document.getElementById("counter").textContent =
+        `${currentIndex + 1} / ${photos.length}`;
 
-        </div>
+    document.getElementById("progressFill").style.width =
+        `${((currentIndex + 1) / photos.length) * 100}%`;
 
+    document.getElementById("status").textContent =
+        answers[currentIndex]?.unknown
+        ? "Marcado como no identificado"
+        : "";
+}
 
-        <p
-            id="last-update"
-            class="last-update"
-        ></p>
+function saveAnswer() {
 
-    </div>
+    const name = document.getElementById("studentName").value.trim();
 
-</section>
+    if (name) {
+        answers[currentIndex] = {
+            name: name,
+            unknown: false
+        };
+    } else if (!answers[currentIndex]?.unknown) {
+        delete answers[currentIndex];
+    }
+}
 
+function nextPhoto() {
 
-<!-- =====================================================
-     FECHAS
-===================================================== -->
+    saveAnswer();
 
-<section
-    id="fechas"
-    class="dates-section"
->
+    if (currentIndex < photos.length - 1) {
+        currentIndex++;
+        showPhoto();
+    } else {
+        document.getElementById("status").textContent =
+            "¡Llegaste a la última fotografía!";
+    }
+}
 
-    <div class="section-container">
+function previousPhoto() {
 
-        <div class="section-heading">
+    saveAnswer();
 
-            <span>
-                📅 FECHAS
-            </span>
+    if (currentIndex > 0) {
+        currentIndex--;
+        showPhoto();
+    }
+}
 
-            <h2>
-                Fechas importantes
-            </h2>
+function markUnknown() {
 
-        </div>
+    answers[currentIndex] = {
+        name: "",
+        unknown: true
+    };
 
-
-        <div class="dates-grid">
-
-
-            <div class="date-card">
-
-                <div class="date-icon">
-                    🏁
-                </div>
-
-                <span>
-                    CIERRE DEL CONCURSO
-                </span>
-
-                <h3>
-                    25 de octubre
-                </h3>
-
-                <p>
-                    11:59 p. m.
-                </p>
-
-            </div>
-
-
-            <div class="date-card">
-
-                <div class="date-icon">
-                    🏆
-                </div>
-
-                <span>
-                    ENTREGA DE PREMIOS
-                </span>
-
-                <h3>
-                    31 de octubre
-                </h3>
-
-                <p>
-                    2026
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     REGISTRO
-===================================================== -->
-
-<section
-    id="registro"
-    class="section register-section"
->
-
-    <div class="section-container">
-
-        <div class="register-wrapper">
-
-
-            <div class="register-info">
-
-                <span>
-                    📝 PARTICIPA
-                </span>
-
-                <h2>
-                    ¿Tienes talento
-                    para el K-Pop?
-                </h2>
-
-                <p>
-
-                    Registra tu participación,
-                    envía tu vídeo de TikTok
-                    y empieza a competir.
-
-                </p>
-
-
-                <ul>
-
-                    <li>
-                        ✓ Vídeo publicado en TikTok
-                    </li>
-
-                    <li>
-                        ✓ Cuenta pública
-                    </li>
-
-                    <li>
-                        ✓ Un participante por inscripción
-                    </li>
-
-                    <li>
-                        ✓ Los likes se contabilizan
-                        durante el concurso
-                    </li>
-
-                </ul>
-
-            </div>
-
-
-            <form
-                id="registration-form"
-                class="registration-form"
-            >
-
-
-                <div class="form-group">
-
-                    <label>
-                        Nombre completo *
-                    </label>
-
-                    <input
-                        id="full_name"
-                        type="text"
-                        required
-                        placeholder="Tu nombre completo"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Usuario de TikTok *
-                    </label>
-
-                    <input
-                        id="tiktok_username"
-                        type="text"
-                        required
-                        placeholder="@tuusuario"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Instagram
-                    </label>
-
-                    <input
-                        id="instagram_username"
-                        type="text"
-                        placeholder="@tuinstagram"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Ciudad / origen *
-                    </label>
-
-                    <input
-                        id="city"
-                        type="text"
-                        required
-                        placeholder="Ej. Quilmaná"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Link de tu vídeo de TikTok *
-                    </label>
-
-                    <input
-                        id="tiktok_url"
-                        type="url"
-                        required
-                        placeholder="https://www.tiktok.com/@usuario/video/..."
-                    >
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="submit-button"
-                >
-
-                    ENVIAR PARTICIPACIÓN
-
-                </button>
-
-
-                <div
-                    id="form-message"
-                    class="form-message"
-                ></div>
-
-
-            </form>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-</main>
-
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
-
-<footer>
-
-    <div class="footer-container">
-
-        <img
-            src="assets/logo.png"
-            alt="K-Pop Dance 2026"
-        >
-
-
-        <p>
-            Concurso K-Pop Dance 2026
-        </p>
-
-
-        <small>
-            Última actualización:
-            <span id="footer-update">
-                —
-            </span>
-        </small>
-
-    </div>
-
-</footer>
-
-
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
-
-<script
-    type="module"
-    src="js/app.js"
-></script>
-
+    nextPhotoWithoutSaving();
+}
+
+function nextPhotoWithoutSaving() {
+
+    if (currentIndex < photos.length - 1) {
+        currentIndex++;
+        showPhoto();
+    } else {
+        document.getElementById("status").textContent =
+            "¡Llegaste a la última fotografía!";
+    }
+}
+</script>
 
 </body>
-
 </html>
