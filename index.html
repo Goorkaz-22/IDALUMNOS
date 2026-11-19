@@ -954,10 +954,16 @@ async function loadPromotionResults(promotionId) {
         img.style.borderRadius = "8px";
 
         if (!signedError && signedData) {
-            img.src = signedData.signedUrl;
-        } else {
-            img.alt = "No se pudo cargar la fotografía";
-        }
+    img.src = signedData.signedUrl;
+} else {
+    console.error(
+        "Error cargando fotografía:",
+        photo.file_path,
+        signedError
+    );
+
+    img.alt = "Error: " + (signedError?.message || "No disponible");
+}
 
         const title = document.createElement("h3");
         title.style.marginTop = "12px";
