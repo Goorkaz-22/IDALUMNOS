@@ -383,7 +383,7 @@ document.getElementById("savePromo").addEventListener("click", async () => {
             const extension = file.name.split(".").pop().toLowerCase();
 
             const path =
-                `${promo.id}/${crypto.randomUUID()}.${extension}`;
+    `${authData.user.id}/${promo.id}/${crypto.randomUUID()}.${extension}`;
 
             console.log("Subiendo:", path);
 
