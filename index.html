@@ -109,6 +109,7 @@ main{padding:20px}
 <button class="active" onclick="showSection('dashboard',this)">⌂ Inicio</button>
 <button onclick="showSection('create',this)">＋ Crear promoción</button>
 <button onclick="showSection('list',this)">▤ Promociones</button>
+<button onclick="showSection('results',this)">📊 Resultados</button>
 </div>
     <button class="btn danger" onclick="logout()"
     style="width:100%;margin-top:25px">
@@ -163,6 +164,40 @@ main{padding:20px}
 <div class="promotions" id="promotionList"></div>
 </section>
 
+
+<section id="results" class="section">
+    <h1>Resultados de identificaciones</h1>
+    <p class="subtitle">
+        Consulta las fotografías y los nombres asignados por los clientes.
+    </p>
+
+    <div class="card">
+        <label>Seleccionar promoción</label>
+        <select id="resultPromo"
+            style="width:100%;padding:13px;background:#0f172a;color:white;border:1px solid #475569;border-radius:8px">
+            <option value="">Selecciona una promoción</option>
+        </select>
+
+        <div class="stats" style="margin-top:20px">
+            <div class="stat">
+                <strong id="resultIdentified">0</strong>
+                <span>Identificados</span>
+            </div>
+            <div class="stat">
+                <strong id="resultUnknown">0</strong>
+                <span>No identificados</span>
+            </div>
+            <div class="stat">
+                <strong id="resultPending">0</strong>
+                <span>Pendientes</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultPhotos" class="promotions"></div>
+</section>
+
+    
 </main>
 </div>
 
