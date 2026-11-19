@@ -1056,6 +1056,7 @@ async function loadPromotionResults(promotionId) {
             await loadPromotionResults(promotionId);
         };
 
+        
         card.append(
             img,
             title,
@@ -1066,18 +1067,6 @@ async function loadPromotionResults(promotionId) {
         );
 
         container.appendChild(card);
-```
-
-### ¿Qué conseguiremos?
-
-- Corregir nombres directamente desde Resultados.
-- Enviar fotografías a la papelera sin borrarlas físicamente.
-- Mantener intactas las demás fotografías.
-- Conservar las identificaciones asociadas para poder recuperarlas.
-
-**Importante:** por ahora la papelera todavía no está construida; este botón solamente marca la fecha de eliminación. No elimina archivos del Storage.
-
-Cuando termines de pegarlo, probaremos primero la edición de un nombre y después la eliminación de una fotografía. 🚀
     }
 
     document.getElementById("resultIdentified").textContent = identified;
