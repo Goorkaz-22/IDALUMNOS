@@ -353,7 +353,7 @@ document.getElementById("savePromo").addEventListener("click", async () => {
         }
 
         // 1. Crear promoción
-        etapa = "Creando promoción";
+         "Creando promoción";
 
         const { data, error: promoError } =
             await supabaseClient
@@ -372,21 +372,6 @@ document.getElementById("savePromo").addEventListener("click", async () => {
 
         console.log("Promoción creada:", promo.id);
 
-        // 2. Verificar bucket
-        etapa = "Verificando almacenamiento";
-
-        const { data: buckets, error: bucketError } =
-            await supabaseClient.storage.listBuckets();
-
-        if (bucketError) throw bucketError;
-
-        const bucketExists = buckets.some(
-            b => b.name === "student-photos"
-        );
-
-        if (!bucketExists) {
-            throw new Error("No existe el bucket student-photos.");
-        }
 
         // 3. Subir fotografías
         for (let i = 0; i < selectedPhotos.length; i++) {
